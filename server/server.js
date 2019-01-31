@@ -1,4 +1,4 @@
-require("./../config/config");
+process.env.NODE_ENV === "dev" ? require("./../config/config") : null;
 
 // NPM Modules
 const express = require("express");
