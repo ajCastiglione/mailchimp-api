@@ -1,19 +1,13 @@
+require("./../config/config");
+
 // NPM Modules
 const express = require("express");
 const bodyParser = require("body-parser");
 const request = require("request");
 const _ = require("lodash");
-const https = require("https");
-const fs = require("fs");
 
-const key = fs.readFileSync("ssl/key.key", "utf8");
-const cert = fs.readFileSync("ssl/certificate.crt", "utf8");
-// const key = fs.readFileSync("key.pem", "utf8");
-// const cert = fs.readFileSync("certificate.pem", "utf8");
-
-const credentials = { key, cert };
 const app = express();
-const port = 8443;
+const port = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
 app.use(function(req, res, next) {
@@ -56,10 +50,10 @@ app.post("/add-email", (req, res) => {
 
   // POST to mailchimp endpoint options
   const options = {
-    url: "https://us19.api.mailchimp.com/3.0/lists/0fdb8544d2",
+    url: `https://us19.api.mailchimp.com/3.0/lists/${process.env.LIST}`,
     method: "POST",
     headers: {
-      Authorization: "auth 5ec5f3e3b6325f774c61f27d7d572ee3-us19"
+      Authorization: `auth ${process.env.AUTH}`
     },
     body: postData
   };
@@ -82,6 +76,4 @@ app.post("/add-email", (req, res) => {
   });
 });
 
-// app.listen(port, () => console.log("Server is running on port " + port));
-let secure = https.createServer(credentials, app);
-secure.listen(port, () => console.log(`Secure server running on ${port}`));
+app.listen(port, () => console.log("Server is running on port " + port));
